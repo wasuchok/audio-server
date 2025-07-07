@@ -2,8 +2,11 @@ package player
 
 import (
 	"log"
+	"net/http"
 	"sync"
 	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 var (
@@ -18,6 +21,10 @@ var (
 	OnFinishTrack func()
 	SendChunk     func([]byte)
 )
+
+var upgraderStream = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool { return true },
+}
 
 func SetBuffer(b []byte) {
 	mu.Lock()

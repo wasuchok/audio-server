@@ -45,14 +45,3 @@ func HandleClientAudioStream(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("🔌 Web client audio disconnected")
 }
-
-func BroadcastToClients(chunk []byte) {
-	clientConns.RLock()
-	defer clientConns.RUnlock()
-
-	for conn := range clientConns.clients {
-		if err := conn.WriteMessage(websocket.BinaryMessage, chunk); err != nil {
-			log.Println("❌ Failed to send chunk to web client:", err)
-		}
-	}
-}

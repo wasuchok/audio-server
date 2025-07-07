@@ -35,35 +35,6 @@ func HandleMicWebSocket(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("🌐 Mic WebSocket connected")
 
-	// ✨ สร้าง ffmpeg command สำหรับ MP3
-	// cmd := exec.Command("ffmpeg",
-	// 	"-f", "s16le",
-	// 	"-ar", "44100",
-	// 	"-ac", "1",
-	// 	"-i", "pipe:0",
-	// 	"-acodec", "libmp3lame",
-	// 	"-ar", "16000", // เปลี่ยนเป็น 16kHz
-	// 	"-ac", "1",
-	// 	"-b:a", "64k", // ลด bitrate สำหรับ 16kHz
-	// 	"-f", "mp3",
-	// 	"pipe:1",
-	// )
-
-	// ✨ สร้าง ffmpeg command
-	// cmd := exec.Command("ffmpeg",
-	// 	"-f", "s16le",
-	// 	"-ar", "44100",
-	// 	"-ac", "1",
-	// 	"-i", "pipe:0",
-	// 	"-acodec", "libmp3lame",
-	// 	"-ar", "16000",
-	// 	"-b:a", "64k",
-	// 	"-ac", "1",
-	// 	"-af", "volume=1",
-	// 	"-f", "mp3",
-	// 	"pipe:1",
-	// )
-
 	cmd := exec.Command("ffmpeg",
 		"-f", "s16le", // รูปแบบ input เป็น PCM 16-bit little-endian
 		"-ar", "44100", // Sample rate 44.1kHz เพื่อคุณภาพเสียงที่ดี

@@ -3,9 +3,12 @@ package server
 import (
 	"fmt"
 	"net"
+
+	"github.com/gorilla/websocket"
 )
 
 var ESPConn net.Conn
+var WebClients = make(map[*websocket.Conn]bool)
 
 func StartTCPServer(port int) {
 	address := fmt.Sprintf(":%d", port)

@@ -20,12 +20,12 @@ import (
 const outputDir = "output"
 
 var playlist = []string{
-	"output/song4.mp3",
-	"output/song3.mp3",
+	"output/song6.mp3",
+	"output/song5.mp3",
 	"output/song2.mp3",
 	"output/song1.mp3",
-	"output/song5.mp3",
-	"output/song6.mp3",
+	"output/song3.mp3",
+	"output/song4.mp3",
 }
 
 var currentTrackIndex = 0
@@ -63,7 +63,6 @@ func loadAndPlayCurrentTrack() {
 
 	player.SetBuffer(data)
 
-	// ตรวจสอบสถานะการเชื่อมต่อ ESP32
 	if server.ESPConn == nil {
 		log.Println("⚠️ ESP32 not connected - audio will not play")
 	} else {
@@ -81,7 +80,6 @@ func main() {
 
 	http.HandleFunc("/ws/mic", ws.HandleMicWebSocket)
 	http.HandleFunc("/ws/control", ws.HandleControlWebSocket)
-	http.HandleFunc("/ws/stream-client", ws.HandleMicWebSocketForWeb)
 	http.HandleFunc("/ws/set-mic-volume", handlers.HandleSetMicVolume)
 
 	go func() {
@@ -96,7 +94,6 @@ func main() {
 		if server.ESPConn != nil {
 			log.Printf("📤 Sending %d bytes to ESP32", len(chunk))
 
-			// ส่งข้อมูลไปยัง ESP32
 			_, err := server.ESPConn.Write(chunk)
 			if err != nil {
 				log.Println("❌ Failed to send chunk to ESP32:", err)
@@ -104,14 +101,11 @@ func main() {
 				return
 			}
 
-			// บังคับให้ข้อมูลถูกส่งทันที
 			if flusher, ok := server.ESPConn.(interface{ Flush() error }); ok {
 				flusher.Flush()
 			}
 
 			log.Printf("✅ Successfully sent %d bytes to ESP32", len(chunk))
-			// optional: ส่งไปหน้าเว็บด้วย
-			// ws.BroadcastToClients(player.MakeWavChunk(chunk))
 
 			time.Sleep(10 * time.Millisecond)
 		} else {
