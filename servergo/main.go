@@ -82,6 +82,7 @@ func main() {
 	http.HandleFunc("/ws/mic", ws.HandleMicWebSocket)
 	http.HandleFunc("/ws/control", ws.HandleControlWebSocket)
 	http.HandleFunc("/ws/stream-client", ws.HandleMicWebSocketForWeb)
+	http.HandleFunc("/ws/set-mic-volume", handlers.HandleSetMicVolume)
 
 	go func() {
 		log.Println("🌐 WebSocket listening on :7777 at /ws/mic")

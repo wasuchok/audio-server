@@ -124,7 +124,7 @@ const sendCommand = (cmd) => {
 }
 
 watch(volume, (newVal) => {
-  sendCommand(`mic-volume-${newVal}`)
+  sendCommand(`mic-volume-${(newVal / 100)}`)
 })
 </script>
 
