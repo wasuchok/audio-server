@@ -25,6 +25,7 @@ func StartTCPServer(port int) {
 
 			fmt.Println("✅ ESP32 connected via TCP")
 			ESPConn = conn
+			fmt.Println("🎵 Audio output ready - ESP32 can now receive audio data")
 
 			go handleTCPConnection(conn)
 		}

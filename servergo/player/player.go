@@ -13,8 +13,8 @@ var (
 	isPlaying     bool
 	ticker        *time.Ticker
 	mu            sync.Mutex
-	ChunkSize     = 256
-	IntervalMs    = 20
+	ChunkSize     = 1024
+	IntervalMs    = 10
 	OnFinishTrack func()
 	SendChunk     func([]byte)
 )
@@ -27,7 +27,7 @@ func SetBuffer(b []byte) {
 	offset = 0
 	isPaused = false
 	isPlaying = false
-	log.Println("🎶 WAV buffer set")
+	log.Printf("🎶 MP3 buffer set: %d bytes, offset: %d", len(buffer), offset)
 }
 
 func Play() {
@@ -41,6 +41,12 @@ func Play() {
 		if OnFinishTrack != nil {
 			go OnFinishTrack()
 		}
+		return
+	}
+
+	if len(buffer) == 0 {
+		log.Println("⚠️ No audio buffer loaded")
+		mu.Unlock()
 		return
 	}
 
@@ -102,9 +108,12 @@ func Stop() {
 }
 
 func startTickerLocked() {
+	log.Printf("🎵 Starting ticker with interval: %dms, chunk size: %d", IntervalMs, ChunkSize)
 	ticker = time.NewTicker(time.Duration(IntervalMs) * time.Millisecond)
 
 	go func() {
+		log.Println("🎵 Ticker goroutine started")
+
 		for range ticker.C {
 			mu.Lock()
 			if isPaused || offset >= len(buffer) {
@@ -130,8 +139,10 @@ func startTickerLocked() {
 			mu.Unlock()
 
 			if SendChunk != nil {
-				//log.Printf("📤 Sending chunk [%d:%d]", offset, end)
+				log.Printf("📤 Sending chunk [%d:%d] size: %d", offset-ChunkSize, offset, len(chunk))
 				SendChunk(chunk)
+			} else {
+				log.Println("⚠️ SendChunk function is nil - no audio output")
 			}
 		}
 	}()
