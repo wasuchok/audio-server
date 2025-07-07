@@ -50,18 +50,32 @@ func HandleMicWebSocket(w http.ResponseWriter, r *http.Request) {
 	// )
 
 	// ✨ สร้าง ffmpeg command
+	// cmd := exec.Command("ffmpeg",
+	// 	"-f", "s16le",
+	// 	"-ar", "44100",
+	// 	"-ac", "1",
+	// 	"-i", "pipe:0",
+	// 	"-acodec", "libmp3lame",
+	// 	"-ar", "16000",
+	// 	"-b:a", "64k",
+	// 	"-ac", "1",
+	// 	"-af", "volume=1",
+	// 	"-f", "mp3",
+	// 	"pipe:1",
+	// )
+
 	cmd := exec.Command("ffmpeg",
-		"-f", "s16le",
-		"-ar", "44100",
-		"-ac", "1",
-		"-i", "pipe:0",
-		"-acodec", "libmp3lame",
-		"-ar", "16000",
-		"-b:a", "64k",
-		"-ac", "1",
-		"-af", "volume=1",
-		"-f", "mp3",
-		"pipe:1",
+		"-f", "s16le", // รูปแบบ input เป็น PCM 16-bit little-endian
+		"-ar", "44100", // Sample rate 44.1kHz เพื่อคุณภาพเสียงที่ดี
+		"-ac", "1", // โมโน (1 channel)
+		"-i", "pipe:0", // อ่าน input จาก stdin
+		"-acodec", "libmp3lame", // ใช้ codec MP3
+		"-ar", "44100", // Output sample rate 44.1kHz
+		"-ac", "2", // ยังคงเป็นโมโน
+		"-b:a", "128k", // Bitrate 128kbps เพื่อคุณภาพที่เหมาะสม
+		"-af", "volume=1.5", // ปรับ volume 1.5 เท่า ลดการ clipping
+		"-f", "mp3", // Output format เป็น MP3
+		"pipe:1", // ส่ง output ไปยัง stdout
 	)
 
 	stdin, err := cmd.StdinPipe()
