@@ -21,6 +21,9 @@ var upgrader = websocket.Upgrader{
 
 var Clients = make(map[*websocket.Conn]bool)
 
+var ChunkSize = 1024 // เพิ่ม chunk size
+var IntervalMs = 5   // ลด interval
+
 func HandleMicWebSocket(w http.ResponseWriter, r *http.Request) {
 	player.Pause()
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -32,36 +35,34 @@ func HandleMicWebSocket(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("🌐 Mic WebSocket connected")
 
+	// ✨ สร้าง ffmpeg command สำหรับ MP3
+	// cmd := exec.Command("ffmpeg",
+	// 	"-f", "s16le",
+	// 	"-ar", "44100",
+	// 	"-ac", "1",
+	// 	"-i", "pipe:0",
+	// 	"-acodec", "libmp3lame",
+	// 	"-ar", "16000", // เปลี่ยนเป็น 16kHz
+	// 	"-ac", "1",
+	// 	"-b:a", "64k", // ลด bitrate สำหรับ 16kHz
+	// 	"-f", "mp3",
+	// 	"pipe:1",
+	// )
+
 	// ✨ สร้าง ffmpeg command
 	cmd := exec.Command("ffmpeg",
 		"-f", "s16le",
 		"-ar", "44100",
 		"-ac", "1",
 		"-i", "pipe:0",
-		"-acodec", "pcm_s16le",
-		"-ar", "44100",
+		"-acodec", "libmp3lame",
+		"-ar", "16000",
+		"-b:a", "64k",
 		"-ac", "1",
 		"-af", "volume=1",
-		"-f", "wav",
+		"-f", "mp3",
 		"pipe:1",
 	)
-
-	// cmd := exec.Command("ffmpeg",
-	// 	"-f", "s16le",
-	// 	"-ar", "44100",
-	// 	"-ac", "1",
-	// 	"-i", "pipe:0",
-
-	// 	"-acodec", "pcm_s16le",
-	// 	"-ar", "44100",
-	// 	"-ac", "1",
-	// 	"-af", "volume=1",
-	// 	"-f", "wav",
-	// 	"-fflags", "nobuffer",
-	// 	"-flags", "low_delay",
-	// 	"-flush_packets", "1",
-	// 	"pipe:1",
-	// )
 
 	stdin, err := cmd.StdinPipe()
 	if err != nil {

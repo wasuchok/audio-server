@@ -7,11 +7,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func HandleGetWavForClient(c echo.Context) error {
+func HandleGetMp3ForClient(c echo.Context) error {
 	data := player.GetFullBuffer()
 	if len(data) == 0 {
 		return c.String(http.StatusNotFound, "No audio buffer")
 	}
 
-	return c.Blob(http.StatusOK, "audio/wav", data)
+	return c.Blob(http.StatusOK, "audio/mpeg", data)
 }

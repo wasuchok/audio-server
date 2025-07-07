@@ -13,7 +13,7 @@ var (
 	isPlaying     bool
 	ticker        *time.Ticker
 	mu            sync.Mutex
-	ChunkSize     = 1024
+	ChunkSize     = 512
 	IntervalMs    = 10
 	OnFinishTrack func()
 	SendChunk     func([]byte)

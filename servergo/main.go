@@ -147,10 +147,10 @@ func main() {
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodOptions},
 	}))
-	e.POST("/api/youtube-to-wav", handlers.HandleYoutubeToWav)
-	e.POST("/api/convert-wav", handlers.HandleConvertWav)
-	e.POST("/api/upload-wav", handlers.HandleConvertWavFromFile)
-	e.GET("/api/audio.wav", handlers.HandleGetWavForClient)
+	e.POST("/api/youtube-to-mp3", handlers.HandleYoutubeToMp3)
+	e.POST("/api/convert-mp3", handlers.HandleConvertMp3)
+	e.POST("/api/upload-mp3", handlers.HandleConvertMp3FromFile)
+	e.GET("/api/audio.mp3", handlers.HandleGetMp3ForClient)
 
 	fmt.Println("🚀 API running on http://localhost:4444")
 	e.Logger.Fatal(e.Start(":4444"))
