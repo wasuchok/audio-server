@@ -19,6 +19,9 @@ import (
 const outputDir = "output"
 
 var playlist = []string{
+	"output/song7.mp3",
+	"output/song8.mp3",
+	"output/song9.mp3",
 	"output/song2.mp3",
 	"output/song1.mp3",
 	"output/song5.mp3",

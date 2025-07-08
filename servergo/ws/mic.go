@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os/exec"
+	"servergo/handlers"
 	"servergo/player"
 	"servergo/server"
 
@@ -74,6 +75,8 @@ func HandleMicWebSocket(w http.ResponseWriter, r *http.Request) {
 					log.Println("❌ Failed to send to ESP32:", err)
 				}
 			}
+
+			handlers.BroadcastToBrowsers(buf[:n])
 		}
 	}()
 
