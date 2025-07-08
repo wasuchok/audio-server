@@ -11,14 +11,6 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// 🔁 เพิ่มไว้เพื่อส่งให้ทุก client
-
-var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
-
 var Clients = make(map[*websocket.Conn]bool)
 
 var ChunkSize = 1024 // เพิ่ม chunk size
