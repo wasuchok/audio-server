@@ -52,7 +52,8 @@ const startMic = async () => {
   try {
     stream = await navigator.mediaDevices.getUserMedia({ audio: true })
 
-    socketMic = new WebSocket('ws://192.168.100.125:7777/ws/mic')
+
+    socketMic = new WebSocket('wss://waaws.teetest.shop/ws/mic')
     socketMic.binaryType = 'arraybuffer'
 
     socketMic.onopen = () => {
@@ -97,7 +98,7 @@ const stopMic = () => {
 }
 
 onMounted(() => {
-  socketControl = new WebSocket('ws://192.168.100.125:7777/ws/control') // ✅ สำหรับคำสั่ง play/pause/resume/stop
+  socketControl = new WebSocket('wss://waaws.teetest.shop/ws/control') // ✅ สำหรับคำสั่ง play/pause/resume/stop
 
   socketControl.onopen = () => {
     connectedControl.value = true
