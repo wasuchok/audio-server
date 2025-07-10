@@ -19,8 +19,8 @@ import (
 const outputDir = "output"
 
 var playlist = []string{
-	"output/song7.mp3",
 	"output/song8.mp3",
+	"output/song7.mp3",
 	"output/song9.mp3",
 	"output/song2.mp3",
 	"output/song1.mp3",
@@ -60,10 +60,10 @@ func loadAndPlayCurrentTrack() {
 
 	player.SetBuffer(data)
 
-	if server.ESPConn == nil {
-		log.Println("⚠️ ESP32 not connected - audio will not play")
+	if len(server.ESPConns) == 0 {
+		log.Println("⚠️ No ESP32 connected - audio will not play")
 	} else {
-		log.Println("✅ ESP32 connected - ready to play audio")
+		log.Printf("✅ %d ESP32 device(s) connected - ready to play audio\n", len(server.ESPConns))
 	}
 
 	player.Play()
@@ -89,9 +89,14 @@ func main() {
 	}()
 
 	player.SendChunk = func(chunk []byte) {
-		// ส่งให้ ESP32
-		if server.ESPConn != nil {
-			server.ESPConn.Write(chunk)
+		// ✅ ส่งให้ ESP32 ทุกเครื่อง
+		for ip, conn := range server.ESPConns {
+			_, err := conn.Write(chunk)
+			if err != nil {
+				log.Printf("❌ Failed to send chunk to ESP32 (%s): %v\n", ip, err)
+				conn.Close()
+				delete(server.ESPConns, ip)
+			}
 		}
 
 		// 🔊 ส่งให้เบราว์เซอร์
@@ -164,7 +169,7 @@ func main() {
 	go func() {
 		for {
 			time.Sleep(5 * time.Second)
-			if server.ESPConn == nil {
+			if server.ESPConns == nil {
 				log.Println("⚠️ ESP32 not connected - waiting for connection on port 5555")
 			} else {
 				log.Println("✅ ESP32 connected - audio ready")

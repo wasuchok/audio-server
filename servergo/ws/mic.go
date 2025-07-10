@@ -14,8 +14,8 @@ import (
 
 var Clients = make(map[*websocket.Conn]bool)
 
-var ChunkSize = 1024 // เพิ่ม chunk size
-var IntervalMs = 5   // ลด interval
+var ChunkSize = 1024
+var IntervalMs = 5
 
 func HandleMicWebSocket(w http.ResponseWriter, r *http.Request) {
 	player.Pause()
@@ -69,10 +69,12 @@ func HandleMicWebSocket(w http.ResponseWriter, r *http.Request) {
 				break
 			}
 
-			if server.ESPConn != nil {
-				_, err := server.ESPConn.Write(buf[:n])
+			for ip, conn := range server.ESPConns {
+				_, err := conn.Write(buf[:n])
 				if err != nil {
-					log.Println("❌ Failed to send to ESP32:", err)
+					log.Printf("❌ Failed to send to ESP32 (%s): %v\n", ip, err)
+					conn.Close()
+					delete(server.ESPConns, ip)
 				}
 			}
 
@@ -120,7 +122,6 @@ func HandleMicWebSocketForWeb(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		// 📡 ส่งไปให้ client stream ทุกตัว
 		for client := range Clients {
 			if err := client.WriteMessage(websocket.BinaryMessage, data); err != nil {
 				log.Println("Send to client failed:", err)
